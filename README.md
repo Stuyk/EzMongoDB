@@ -12,7 +12,7 @@ Store your client data in collections and fetch and perfrom creation, reading, u
 ## Install
 
 ```
-$ npm install ezmongodb
+$ npm install @stuyk/ezmongodb
 ```
 
 # Starting Usage
