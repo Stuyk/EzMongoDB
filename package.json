@@ -1,0 +1,41 @@
+{
+    "name": "ezmongodb",
+    "version": "1.0.0",
+    "description": "A very simple MongoDB driver wrapper for easy database usage.",
+    "main": "./dist/index.js",
+    "license": "GNUv3",
+    "keywords": [
+        "mongodb",
+        "mongo"
+    ],
+    "scripts": {
+        "prepublishOnly": "npm run build",
+        "build": "tsc",
+        "start": "npm run build && node ./dist/index.js",
+        "test": "jest"
+    },
+    "module": "commonjs",
+    "author": "stuyk",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/stuyk/ezmongodb.git"
+    },
+    "homepage": "https://github.com/Stuyk/ezmongodb#readme",
+    "devDependencies": {
+        "@types/jest": "^26.0.23",
+        "@types/mongodb": "^3.5.27",
+        "@types/node": "^14.11.2",
+        "jest": "^27.0.4",
+        "ts-jest": "^27.0.3"
+    },
+    "dependencies": {
+        "mongodb": "^3.6.9",
+        "typescript": "^4.3.2"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "printWidth": 120,
+        "singleQuote": true,
+        "semi": true
+    }
+}
