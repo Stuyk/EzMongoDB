@@ -1,4 +1,3 @@
-"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -46,9 +45,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var mongodb_1 = require("mongodb");
-var logger_1 = require("./utility/logger");
+import { MongoClient, ObjectId, ObjectID } from 'mongodb';
+import { Logger } from './utility/logger';
 var isInitialized = false;
 var client;
 var db;
@@ -73,7 +71,7 @@ var Database = /** @class */ (function () {
                         if (client) {
                             return [2 /*return*/, true];
                         }
-                        client = new mongodb_1.MongoClient(url, {
+                        client = new MongoClient(url, {
                             useUnifiedTopology: true,
                             useNewUrlParser: true
                         });
@@ -84,7 +82,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         didConnect = _a.sent();
                         if (!didConnect) {
-                            logger_1.Logger.error("Failed to connect to Database with " + url + ". Double-check specified URL, and ports.");
+                            Logger.error("Failed to connect to Database with " + url + ". Double-check specified URL, and ports.");
                             return [2 /*return*/, false];
                         }
                         db = client.db(databaseName);
@@ -107,7 +105,7 @@ var Database = /** @class */ (function () {
                                         return [4 /*yield*/, db.createCollection(collectionName)];
                                     case 1:
                                         _b.sent();
-                                        logger_1.Logger.log("Generated Collection - " + collectionName);
+                                        Logger.log("Generated Collection - " + collectionName);
                                         return [2 /*return*/];
                                 }
                             });
@@ -124,7 +122,7 @@ var Database = /** @class */ (function () {
                         i++;
                         return [3 /*break*/, 3];
                     case 6:
-                        logger_1.Logger.log("Connection Established");
+                        Logger.log("Connection Established");
                         isInitialized = true;
                         return [2 /*return*/, true];
                 }
@@ -180,7 +178,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         _b.sent();
                         if (key === '_id' && typeof key !== 'object') {
-                            value = new mongodb_1.ObjectId(value);
+                            value = new ObjectId(value);
                         }
                         return [4 /*yield*/, db.collection(collectionName).findOne((_a = {}, _a[key] = value, _a))];
                     case 2: return [2 /*return*/, _b.sent()];
@@ -214,7 +212,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         _b.sent();
                         if (key === '_id' && typeof key !== 'object') {
-                            value = new mongodb_1.ObjectId(value);
+                            value = new ObjectId(value);
                         }
                         return [4 /*yield*/, db.collection(collectionName)];
                     case 2:
@@ -271,7 +269,7 @@ var Database = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         if (!document || !collection) {
-                            logger_1.Logger.error("Failed to specify document or collection for insertData.");
+                            Logger.error("Failed to specify document or collection for insertData.");
                             return [2 /*return*/, null];
                         }
                         return [4 /*yield*/, Database.hasInitialized()];
@@ -306,14 +304,14 @@ var Database = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         if (!_id || !data || !collection) {
-                            logger_1.Logger.error("Failed to specify id, data or collection for updatePartialData.");
+                            Logger.error("Failed to specify id, data or collection for updatePartialData.");
                             return [2 /*return*/, null];
                         }
                         return [4 /*yield*/, Database.hasInitialized()];
                     case 1:
                         _a.sent();
                         if (typeof _id !== 'object') {
-                            _id = new mongodb_1.ObjectId(_id);
+                            _id = new ObjectId(_id);
                         }
                         _a.label = 2;
                     case 2:
@@ -324,7 +322,7 @@ var Database = /** @class */ (function () {
                         return [2 /*return*/, true];
                     case 4:
                         err_1 = _a.sent();
-                        logger_1.Logger.error("Could not find and update a value with id: " + _id.toString());
+                        Logger.error("Could not find and update a value with id: " + _id.toString());
                         return [2 /*return*/, false];
                     case 5: return [2 /*return*/];
                 }
@@ -354,7 +352,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         if (typeof _id !== 'object') {
-                            _id = new mongodb_1.ObjectId(_id);
+                            _id = new ObjectId(_id);
                         }
                         _a.label = 2;
                     case 2:
@@ -434,7 +432,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         _b.sent();
                         if (key === '_id' && typeof value !== 'object') {
-                            value = new mongodb_1.ObjectID(value);
+                            value = new ObjectID(value);
                         }
                         return [4 /*yield*/, db.collection(collection).findOneAndUpdate((_a = {}, _a[key] = value, _a), { $set: __assign({}, data) })];
                     case 2:
@@ -485,7 +483,7 @@ var Database = /** @class */ (function () {
                         return [3 /*break*/, 5];
                     case 4:
                         err_3 = _a.sent();
-                        logger_1.Logger.log("Did not find " + collectionName + " to drop.");
+                        Logger.log("Did not find " + collectionName + " to drop.");
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/, res];
                 }
@@ -509,11 +507,11 @@ var Database = /** @class */ (function () {
                                 .db()
                                 .dropDatabase()
                                 .catch(function (err) {
-                                logger_1.Logger.error(err);
+                                Logger.error(err);
                                 return false;
                             })
                                 .then(function (res) {
-                                logger_1.Logger.log("Dropped database successfully.");
+                                Logger.log("Dropped database successfully.");
                                 return true;
                             })];
                     case 2: return [2 /*return*/, _a.sent()];
@@ -550,5 +548,5 @@ var Database = /** @class */ (function () {
     };
     return Database;
 }());
-exports.default = Database;
+export { Database };
 //# sourceMappingURL=index.js.map

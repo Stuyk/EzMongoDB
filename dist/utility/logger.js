@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = void 0;
 var Logger = /** @class */ (function () {
     function Logger() {
     }
@@ -12,5 +9,5 @@ var Logger = /** @class */ (function () {
     };
     return Logger;
 }());
-exports.Logger = Logger;
+export { Logger };
 //# sourceMappingURL=logger.js.map

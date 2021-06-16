@@ -1,4 +1,4 @@
-export default class Database {
+export declare class Database {
     /**
      * Used to initialize the Database instance.
      * @static
