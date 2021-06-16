@@ -1,11 +1,12 @@
 import { Db, MongoClient, ObjectId, ObjectID } from 'mongodb';
+
 import { Logger } from './utility/logger';
 
 let isInitialized = false;
 let client: MongoClient;
 let db: Db;
 
-export class Database {
+export default class Database {
     /**
      * Used to initialize the Database instance.
      * @static

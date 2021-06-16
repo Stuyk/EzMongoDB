@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Database = void 0;
 const mongodb_1 = require("mongodb");
 const logger_1 = require("./utility/logger");
 let isInitialized = false;
@@ -362,5 +361,5 @@ class Database {
         });
     }
 }
-exports.Database = Database;
+exports.default = Database;
 //# sourceMappingURL=index.js.map
