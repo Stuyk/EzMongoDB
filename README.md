@@ -30,7 +30,7 @@ Additional information can be found below. 👇🏻
 Import the Database static class.
 
 ```js
-import { Database } from '@stuyk/ezmongodb';
+import Database from '@stuyk/ezmongodb';
 ```
 
 ## 🔗 Establish Connection
@@ -38,7 +38,7 @@ import { Database } from '@stuyk/ezmongodb';
 Establish a connection through the `Database` static class.
 
 ```js
-import { Database } from '@stuyk/ezmongodb';
+import Database from '@stuyk/ezmongodb';
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'test';
@@ -59,7 +59,7 @@ These are just some general examples of creating, reading, updating, and deletin
 
 
 ```ts
-import { Database } from '@stuyk/ezmongodb';
+import Database from '@stuyk/ezmongodb';
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'test';

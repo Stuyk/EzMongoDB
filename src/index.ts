@@ -6,16 +6,31 @@ let isInitialized = false;
 let client: MongoClient;
 let db: Db;
 
-export namespace Database {
-    /**
-     * Used to initialize the Database instance.
-     * @static
-     * @param {string} url
-     * @param {string} databaseName
-     * @param {Array<string>} collections
-     * @return {*}  {Promise<boolean>}
-     */
-    export async function init(url: string, databaseName: string, collections: Array<string>): Promise<boolean> {
+/**
+ * Used to determine if the database has finished initializing.
+ * @static
+ * @return {Promise<boolean>}
+ * @memberof Database
+ */
+async function hasInitialized(): Promise<boolean> {
+    return new Promise((resolve) => {
+        if (isInitialized) {
+            return resolve(true);
+        }
+
+        const timeout = setInterval(() => {
+            if (!isInitialized) {
+                return;
+            }
+
+            clearTimeout(timeout);
+            return resolve(true);
+        }, 250);
+    });
+}
+
+export default {
+    init: async (url: string, databaseName: string, collections: Array<string>): Promise<boolean> => {
         if (client) {
             return true;
         }
@@ -58,30 +73,7 @@ export namespace Database {
         Logger.log(`Connection Established`);
         isInitialized = true;
         return true;
-    }
-
-    /**
-     * Used to determine if the database has finished initializing.
-     * @static
-     * @return {Promise<boolean>}
-     * @memberof Database
-     */
-    export async function hasInitialized(): Promise<boolean> {
-        return new Promise((resolve) => {
-            if (isInitialized) {
-                return resolve(true);
-            }
-
-            const timeout = setInterval(() => {
-                if (!isInitialized) {
-                    return;
-                }
-
-                clearTimeout(timeout);
-                return resolve(true);
-            }, 250);
-        });
-    }
+    },
 
     /**
      * Find one document by key and value pair. Equivalent of fetching by an id.
@@ -94,20 +86,20 @@ export namespace Database {
      * @return {(Promise<T | null>)}
      * @memberof Database
      */
-    export async function fetchData<T>(key: string, value: any, collectionName: string): Promise<T | null> {
+    fetchData: async <T>(key: string, value: any, collectionName: string): Promise<T | null> => {
         if (!key || !value || !collectionName) {
             console.error(`Failed to specify key, value, or collectionName for fetchAllByField.`);
             return null;
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         if (key === '_id' && typeof key !== 'object') {
             value = new ObjectId(value);
         }
 
         return await db.collection(collectionName).findOne({ [key]: value });
-    }
+    },
 
     /**
      * Fetch all data that matches a key and value pair as an array.
@@ -120,13 +112,13 @@ export namespace Database {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    export async function fetchAllByField<T>(key: string, value: any, collectionName: string): Promise<T[]> {
+    fetchAllByField: async <T>(key: string, value: any, collectionName: string): Promise<T[]> => {
         if (!key || !value || !collectionName) {
             console.error(`Failed to specify key, value, or collectionName for fetchAllByField.`);
             return [];
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         if (key === '_id' && typeof key !== 'object') {
             value = new ObjectId(value);
@@ -134,7 +126,7 @@ export namespace Database {
 
         const collection = await db.collection(collectionName);
         return await collection.find({ [key]: value }).toArray();
-    }
+    },
 
     /**
      * Get all elements from a collection.
@@ -144,17 +136,17 @@ export namespace Database {
      * @return {Promise<Array<T[]>>}
      * @memberof Database
      */
-    export async function fetchAllData<T>(collectionName: string): Promise<T[]> {
+    fetchAllData: async <T>(collectionName: string): Promise<T[]> => {
         if (!collectionName) {
             console.error(`Failed to specify collectionName for fetchAllData.`);
             return [];
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         const collection = await db.collection(collectionName);
         return collection.find().toArray();
-    }
+    },
 
     /**
      * Insert a document and return the new full document with _id.
@@ -165,13 +157,13 @@ export namespace Database {
      * @returns {Promise<T | null>} Document
      * @template T
      */
-    export async function insertData<T>(document: T, collection: string, returnDocument = false): Promise<T> {
+    insertData: async <T>(document: T, collection: string, returnDocument = false): Promise<T> => {
         if (!document || !collection) {
             Logger.error(`Failed to specify document or collection for insertData.`);
             return null;
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         const result = await db.collection(collection).insertOne(document);
 
@@ -180,7 +172,7 @@ export namespace Database {
         }
 
         return await db.collection(collection).findOne({ _id: result.insertedId });
-    }
+    },
 
     /**
      * Modify an existing document in the database. Must have an _id first to modify data.
@@ -192,13 +184,13 @@ export namespace Database {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    export async function updatePartialData(_id: any, data: Object, collection: string): Promise<boolean> {
+    updatePartialData: async (_id: any, data: Object, collection: string): Promise<boolean> => {
         if (!_id || !data || !collection) {
             Logger.error(`Failed to specify id, data or collection for updatePartialData.`);
             return null;
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         if (typeof _id !== 'object') {
             _id = new ObjectId(_id);
@@ -211,7 +203,7 @@ export namespace Database {
             Logger.error(`Could not find and update a value with id: ${_id.toString()}`);
             return false;
         }
-    }
+    },
 
     /**
      * Delete a document by _id and collection.
@@ -222,13 +214,13 @@ export namespace Database {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    export async function deleteById(_id: any, collection: string): Promise<boolean> {
+    deleteById: async (_id: any, collection: string): Promise<boolean> => {
         if (!_id || !collection) {
             console.error(`Failed to specify id, or collection for deleteById`);
             return false;
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         if (typeof _id !== 'object') {
             _id = new ObjectId(_id);
@@ -240,7 +232,7 @@ export namespace Database {
         } catch (err) {
             return false;
         }
-    }
+    },
 
     /**
      * Specify a list of fields to select from the database in a collection.
@@ -251,13 +243,13 @@ export namespace Database {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    export async function selectData<T>(collection: string, keys: string[]): Promise<T[]> {
+    selectData: async <T>(collection: string, keys: string[]): Promise<T[]> => {
         if (!keys || !collection) {
             console.error(`Failed to specify keys, or collection for selectData`);
             return [];
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         const selectData = {
             _id: 1
@@ -272,7 +264,7 @@ export namespace Database {
             .find({})
             .project({ ...selectData })
             .toArray();
-    }
+    },
 
     /**
      * Update any data that matches specified field name and value.
@@ -284,18 +276,13 @@ export namespace Database {
      * @return {*}  {Promise<boolean>}
      * @memberof Database
      */
-    export async function updateDataByFieldMatch(
-        key: string,
-        value: any,
-        data: Object,
-        collection: string
-    ): Promise<boolean> {
+    updateDataByFieldMatch: async (key: string, value: any, data: Object, collection: string): Promise<boolean> => {
         if (!key || !value || !data || !collection) {
             console.error(`Failed to specify key, value, data, or collection for updateDataByFieldMatch.`);
             return false;
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         if (key === '_id' && typeof value !== 'object') {
             value = new ObjectID(value);
@@ -308,7 +295,7 @@ export namespace Database {
         }
 
         return true;
-    }
+    },
 
     /**
      * Drop a collection from the database.
@@ -317,13 +304,13 @@ export namespace Database {
      * @return {Promise<void>}
      * @memberof Database
      */
-    export async function dropCollection(collectionName: string): Promise<boolean> {
+    dropCollection: async (collectionName: string): Promise<boolean> => {
         if (!collectionName) {
             console.error(`Failed to specify collectionName for dropCollection.`);
             return false;
         }
 
-        await Database.hasInitialized();
+        await hasInitialized();
 
         let res = false;
 
@@ -342,7 +329,7 @@ export namespace Database {
         }
 
         return res;
-    }
+    },
 
     /**
      * Remove an entire database from MongoDB. Including all collections.
@@ -350,8 +337,8 @@ export namespace Database {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    export async function dropDatabase(): Promise<boolean> {
-        await Database.hasInitialized();
+    dropDatabase: async (): Promise<boolean> => {
+        await hasInitialized();
 
         return await client
             .db()
@@ -364,7 +351,7 @@ export namespace Database {
                 Logger.log(`Dropped database successfully.`);
                 return true;
             });
-    }
+    },
 
     /**
      * Close the connection to the database.
@@ -372,7 +359,7 @@ export namespace Database {
      * @return {Promise<void>}
      * @memberof Database
      */
-    export async function close(): Promise<void> {
+    close: async (): Promise<void> => {
         if (!client) {
             db = null;
             isInitialized = false;
@@ -385,4 +372,4 @@ export namespace Database {
         db = null;
         isInitialized = false;
     }
-}
+};

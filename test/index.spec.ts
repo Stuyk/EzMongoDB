@@ -1,4 +1,4 @@
-import { Database } from '../src/index';
+import Database from '../src/index';
 
 jest.setTimeout(60000);
 
