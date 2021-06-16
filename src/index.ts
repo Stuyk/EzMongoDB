@@ -29,7 +29,7 @@ async function hasInitialized(): Promise<boolean> {
     });
 }
 
-export default {
+const Database = {
     init: async (url: string, databaseName: string, collections: Array<string>): Promise<boolean> => {
         if (client) {
             return true;
@@ -373,3 +373,5 @@ export default {
         isInitialized = false;
     }
 };
+
+export = Database;

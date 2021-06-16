@@ -46,7 +46,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 var mongodb_1 = require("mongodb");
 var logger_1 = require("./utility/logger");
 var isInitialized = false;
@@ -76,7 +75,7 @@ function hasInitialized() {
         });
     });
 }
-exports.default = {
+var Database = {
     init: function (url, databaseName, collections) { return __awaiter(void 0, void 0, void 0, function () {
         var didConnect, currentCollections, _loop_1, i;
         return __generator(this, function (_a) {
@@ -516,4 +515,5 @@ exports.default = {
         });
     }); }
 };
+module.exports = Database;
 //# sourceMappingURL=index.js.map

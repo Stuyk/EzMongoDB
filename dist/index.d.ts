@@ -1,4 +1,4 @@
-declare const _default: {
+declare const Database: {
     init: (url: string, databaseName: string, collections: Array<string>) => Promise<boolean>;
     /**
      * Find one document by key and value pair. Equivalent of fetching by an id.
@@ -108,4 +108,4 @@ declare const _default: {
      */
     close: () => Promise<void>;
 };
-export default _default;
+export = Database;
