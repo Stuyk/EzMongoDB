@@ -6,7 +6,7 @@ let isInitialized = false;
 let client: MongoClient;
 let db: Db;
 
-class Database {
+export default class Database {
     /**
      * Used to initialize the Database instance.
      * @static
@@ -382,7 +382,3 @@ class Database {
         isInitialized = false;
     }
 }
-
-module.exports = {
-    Database
-};

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "es5",
     "noImplicitAny": false,
     "moduleResolution": "node",
     "sourceMap": true,
@@ -10,10 +10,10 @@
     "baseUrl": ".",
     "paths": {
       "*": [
-        "node_modules/*"
+        "node_modules/*",
+        "src/*"
       ]
     },
-    "experimentalDecorators": true,
     "declaration": true
   },
   "include": ["./src/**/*", "tests/index.spec.ts"  ],
