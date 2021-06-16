@@ -1,6 +1,6 @@
 {
     "name": "@stuyk/ezmongodb",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "description": "A very simple MongoDB driver wrapper for easy database usage.",
     "main": "./dist/index.js",
     "license": "GNUv3",
@@ -37,7 +37,8 @@
         "tabWidth": 4,
         "printWidth": 120,
         "singleQuote": true,
-        "semi": true
+        "semi": true,
+        "trailingComma": "none"
     },
     "types": "./dist/index.d.ts"
 }

@@ -31,7 +31,7 @@ class Database {
             }
             client = new mongodb_1.MongoClient(url, {
                 useUnifiedTopology: true,
-                useNewUrlParser: true,
+                useNewUrlParser: true
             });
             const didConnect = yield client.connect().catch((err) => {
                 console.error(err);
@@ -248,7 +248,7 @@ class Database {
             }
             yield Database.hasInitialized();
             const selectData = {
-                _id: 1,
+                _id: 1
             };
             for (let i = 0; i < keys.length; i++) {
                 selectData[keys[i]] = 1;
@@ -361,5 +361,7 @@ class Database {
         });
     }
 }
-exports.default = Database;
+module.exports = {
+    Database
+};
 //# sourceMappingURL=index.js.map

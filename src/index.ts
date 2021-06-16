@@ -6,7 +6,7 @@ let isInitialized = false;
 let client: MongoClient;
 let db: Db;
 
-export class Database {
+class Database {
     /**
      * Used to initialize the Database instance.
      * @static
@@ -23,7 +23,7 @@ export class Database {
 
         client = new MongoClient(url, {
             useUnifiedTopology: true,
-            useNewUrlParser: true,
+            useNewUrlParser: true
         });
 
         const didConnect = await client.connect().catch((err) => {
@@ -261,7 +261,7 @@ export class Database {
         await Database.hasInitialized();
 
         const selectData = {
-            _id: 1,
+            _id: 1
         };
 
         for (let i = 0; i < keys.length; i++) {
@@ -384,5 +384,5 @@ export class Database {
 }
 
 module.exports = {
-    Database,
+    Database
 };
