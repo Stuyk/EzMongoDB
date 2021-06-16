@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "es2020",
+    "module": "commonjs",
     "esModuleInterop": true,
     "target": "es5",
     "noImplicitAny": false,

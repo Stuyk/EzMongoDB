@@ -6,7 +6,7 @@ let isInitialized = false;
 let client: MongoClient;
 let db: Db;
 
-export class Database {
+export namespace Database {
     /**
      * Used to initialize the Database instance.
      * @static
@@ -14,9 +14,8 @@ export class Database {
      * @param {string} databaseName
      * @param {Array<string>} collections
      * @return {*}  {Promise<boolean>}
-     * @memberof Database
      */
-    static async init(url: string, databaseName: string, collections: Array<string>): Promise<boolean> {
+    export async function init(url: string, databaseName: string, collections: Array<string>): Promise<boolean> {
         if (client) {
             return true;
         }
@@ -67,7 +66,7 @@ export class Database {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    static async hasInitialized(): Promise<boolean> {
+    export async function hasInitialized(): Promise<boolean> {
         return new Promise((resolve) => {
             if (isInitialized) {
                 return resolve(true);
@@ -95,7 +94,7 @@ export class Database {
      * @return {(Promise<T | null>)}
      * @memberof Database
      */
-    static async fetchData<T>(key: string, value: any, collectionName: string): Promise<T | null> {
+    export async function fetchData<T>(key: string, value: any, collectionName: string): Promise<T | null> {
         if (!key || !value || !collectionName) {
             console.error(`Failed to specify key, value, or collectionName for fetchAllByField.`);
             return null;
@@ -121,7 +120,7 @@ export class Database {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    static async fetchAllByField<T>(key: string, value: any, collectionName: string): Promise<T[]> {
+    export async function fetchAllByField<T>(key: string, value: any, collectionName: string): Promise<T[]> {
         if (!key || !value || !collectionName) {
             console.error(`Failed to specify key, value, or collectionName for fetchAllByField.`);
             return [];
@@ -145,7 +144,7 @@ export class Database {
      * @return {Promise<Array<T[]>>}
      * @memberof Database
      */
-    static async fetchAllData<T>(collectionName: string): Promise<T[]> {
+    export async function fetchAllData<T>(collectionName: string): Promise<T[]> {
         if (!collectionName) {
             console.error(`Failed to specify collectionName for fetchAllData.`);
             return [];
@@ -166,7 +165,7 @@ export class Database {
      * @returns {Promise<T | null>} Document
      * @template T
      */
-    static async insertData<T>(document: T, collection: string, returnDocument = false): Promise<T> {
+    export async function insertData<T>(document: T, collection: string, returnDocument = false): Promise<T> {
         if (!document || !collection) {
             Logger.error(`Failed to specify document or collection for insertData.`);
             return null;
@@ -193,7 +192,7 @@ export class Database {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    static async updatePartialData(_id: any, data: Object, collection: string): Promise<boolean> {
+    export async function updatePartialData(_id: any, data: Object, collection: string): Promise<boolean> {
         if (!_id || !data || !collection) {
             Logger.error(`Failed to specify id, data or collection for updatePartialData.`);
             return null;
@@ -223,7 +222,7 @@ export class Database {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    static async deleteById(_id: any, collection: string): Promise<boolean> {
+    export async function deleteById(_id: any, collection: string): Promise<boolean> {
         if (!_id || !collection) {
             console.error(`Failed to specify id, or collection for deleteById`);
             return false;
@@ -252,7 +251,7 @@ export class Database {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    static async selectData<T>(collection: string, keys: string[]): Promise<T[]> {
+    export async function selectData<T>(collection: string, keys: string[]): Promise<T[]> {
         if (!keys || !collection) {
             console.error(`Failed to specify keys, or collection for selectData`);
             return [];
@@ -285,7 +284,12 @@ export class Database {
      * @return {*}  {Promise<boolean>}
      * @memberof Database
      */
-    static async updateDataByFieldMatch(key: string, value: any, data: Object, collection: string): Promise<boolean> {
+    export async function updateDataByFieldMatch(
+        key: string,
+        value: any,
+        data: Object,
+        collection: string
+    ): Promise<boolean> {
         if (!key || !value || !data || !collection) {
             console.error(`Failed to specify key, value, data, or collection for updateDataByFieldMatch.`);
             return false;
@@ -313,7 +317,7 @@ export class Database {
      * @return {Promise<void>}
      * @memberof Database
      */
-    static async dropCollection(collectionName: string): Promise<boolean> {
+    export async function dropCollection(collectionName: string): Promise<boolean> {
         if (!collectionName) {
             console.error(`Failed to specify collectionName for dropCollection.`);
             return false;
@@ -346,7 +350,7 @@ export class Database {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    static async dropDatabase(): Promise<boolean> {
+    export async function dropDatabase(): Promise<boolean> {
         await Database.hasInitialized();
 
         return await client
@@ -368,7 +372,7 @@ export class Database {
      * @return {Promise<void>}
      * @memberof Database
      */
-    static async close(): Promise<void> {
+    export async function close(): Promise<void> {
         if (!client) {
             db = null;
             isInitialized = false;

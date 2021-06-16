@@ -1,3 +1,4 @@
+"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -45,14 +46,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { MongoClient, ObjectId, ObjectID } from 'mongodb';
-import { Logger } from './utility/logger';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Database = void 0;
+var mongodb_1 = require("mongodb");
+var logger_1 = require("./utility/logger");
 var isInitialized = false;
 var client;
 var db;
-var Database = /** @class */ (function () {
-    function Database() {
-    }
+var Database;
+(function (Database) {
     /**
      * Used to initialize the Database instance.
      * @static
@@ -60,9 +62,8 @@ var Database = /** @class */ (function () {
      * @param {string} databaseName
      * @param {Array<string>} collections
      * @return {*}  {Promise<boolean>}
-     * @memberof Database
      */
-    Database.init = function (url, databaseName, collections) {
+    function init(url, databaseName, collections) {
         return __awaiter(this, void 0, void 0, function () {
             var didConnect, currentCollections, _loop_1, i;
             return __generator(this, function (_a) {
@@ -71,7 +72,7 @@ var Database = /** @class */ (function () {
                         if (client) {
                             return [2 /*return*/, true];
                         }
-                        client = new MongoClient(url, {
+                        client = new mongodb_1.MongoClient(url, {
                             useUnifiedTopology: true,
                             useNewUrlParser: true
                         });
@@ -82,7 +83,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         didConnect = _a.sent();
                         if (!didConnect) {
-                            Logger.error("Failed to connect to Database with " + url + ". Double-check specified URL, and ports.");
+                            logger_1.Logger.error("Failed to connect to Database with " + url + ". Double-check specified URL, and ports.");
                             return [2 /*return*/, false];
                         }
                         db = client.db(databaseName);
@@ -105,7 +106,7 @@ var Database = /** @class */ (function () {
                                         return [4 /*yield*/, db.createCollection(collectionName)];
                                     case 1:
                                         _b.sent();
-                                        Logger.log("Generated Collection - " + collectionName);
+                                        logger_1.Logger.log("Generated Collection - " + collectionName);
                                         return [2 /*return*/];
                                 }
                             });
@@ -122,20 +123,21 @@ var Database = /** @class */ (function () {
                         i++;
                         return [3 /*break*/, 3];
                     case 6:
-                        Logger.log("Connection Established");
+                        logger_1.Logger.log("Connection Established");
                         isInitialized = true;
                         return [2 /*return*/, true];
                 }
             });
         });
-    };
+    }
+    Database.init = init;
     /**
      * Used to determine if the database has finished initializing.
      * @static
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    Database.hasInitialized = function () {
+    function hasInitialized() {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve) {
@@ -152,7 +154,8 @@ var Database = /** @class */ (function () {
                     })];
             });
         });
-    };
+    }
+    Database.hasInitialized = hasInitialized;
     /**
      * Find one document by key and value pair. Equivalent of fetching by an id.
      * Use case: Fetching a single document with an id, name, username, etc.
@@ -164,7 +167,7 @@ var Database = /** @class */ (function () {
      * @return {(Promise<T | null>)}
      * @memberof Database
      */
-    Database.fetchData = function (key, value, collectionName) {
+    function fetchData(key, value, collectionName) {
         return __awaiter(this, void 0, void 0, function () {
             var _a;
             return __generator(this, function (_b) {
@@ -178,14 +181,15 @@ var Database = /** @class */ (function () {
                     case 1:
                         _b.sent();
                         if (key === '_id' && typeof key !== 'object') {
-                            value = new ObjectId(value);
+                            value = new mongodb_1.ObjectId(value);
                         }
                         return [4 /*yield*/, db.collection(collectionName).findOne((_a = {}, _a[key] = value, _a))];
                     case 2: return [2 /*return*/, _b.sent()];
                 }
             });
         });
-    };
+    }
+    Database.fetchData = fetchData;
     /**
      * Fetch all data that matches a key and value pair as an array.
      * Use case: Fetching all users who have a specific boolean toggled.
@@ -197,7 +201,7 @@ var Database = /** @class */ (function () {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    Database.fetchAllByField = function (key, value, collectionName) {
+    function fetchAllByField(key, value, collectionName) {
         return __awaiter(this, void 0, void 0, function () {
             var collection;
             var _a;
@@ -212,7 +216,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         _b.sent();
                         if (key === '_id' && typeof key !== 'object') {
-                            value = new ObjectId(value);
+                            value = new mongodb_1.ObjectId(value);
                         }
                         return [4 /*yield*/, db.collection(collectionName)];
                     case 2:
@@ -222,7 +226,8 @@ var Database = /** @class */ (function () {
                 }
             });
         });
-    };
+    }
+    Database.fetchAllByField = fetchAllByField;
     /**
      * Get all elements from a collection.
      * @static
@@ -231,7 +236,7 @@ var Database = /** @class */ (function () {
      * @return {Promise<Array<T[]>>}
      * @memberof Database
      */
-    Database.fetchAllData = function (collectionName) {
+    function fetchAllData(collectionName) {
         return __awaiter(this, void 0, void 0, function () {
             var collection;
             return __generator(this, function (_a) {
@@ -251,7 +256,8 @@ var Database = /** @class */ (function () {
                 }
             });
         });
-    };
+    }
+    Database.fetchAllData = fetchAllData;
     /**
      * Insert a document and return the new full document with _id.
      * Use case: Insert a new entry into the database.
@@ -261,7 +267,7 @@ var Database = /** @class */ (function () {
      * @returns {Promise<T | null>} Document
      * @template T
      */
-    Database.insertData = function (document, collection, returnDocument) {
+    function insertData(document, collection, returnDocument) {
         if (returnDocument === void 0) { returnDocument = false; }
         return __awaiter(this, void 0, void 0, function () {
             var result;
@@ -269,7 +275,7 @@ var Database = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         if (!document || !collection) {
-                            Logger.error("Failed to specify document or collection for insertData.");
+                            logger_1.Logger.error("Failed to specify document or collection for insertData.");
                             return [2 /*return*/, null];
                         }
                         return [4 /*yield*/, Database.hasInitialized()];
@@ -286,7 +292,8 @@ var Database = /** @class */ (function () {
                 }
             });
         });
-    };
+    }
+    Database.insertData = insertData;
     /**
      * Modify an existing document in the database. Must have an _id first to modify data.
      * Use case: Update an existing document with new data, or update existing data.
@@ -297,21 +304,21 @@ var Database = /** @class */ (function () {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    Database.updatePartialData = function (_id, data, collection) {
+    function updatePartialData(_id, data, collection) {
         return __awaiter(this, void 0, void 0, function () {
             var err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!_id || !data || !collection) {
-                            Logger.error("Failed to specify id, data or collection for updatePartialData.");
+                            logger_1.Logger.error("Failed to specify id, data or collection for updatePartialData.");
                             return [2 /*return*/, null];
                         }
                         return [4 /*yield*/, Database.hasInitialized()];
                     case 1:
                         _a.sent();
                         if (typeof _id !== 'object') {
-                            _id = new ObjectId(_id);
+                            _id = new mongodb_1.ObjectId(_id);
                         }
                         _a.label = 2;
                     case 2:
@@ -322,13 +329,14 @@ var Database = /** @class */ (function () {
                         return [2 /*return*/, true];
                     case 4:
                         err_1 = _a.sent();
-                        Logger.error("Could not find and update a value with id: " + _id.toString());
+                        logger_1.Logger.error("Could not find and update a value with id: " + _id.toString());
                         return [2 /*return*/, false];
                     case 5: return [2 /*return*/];
                 }
             });
         });
-    };
+    }
+    Database.updatePartialData = updatePartialData;
     /**
      * Delete a document by _id and collection.
      * Use case: Delete the entry from the database collection.
@@ -338,7 +346,7 @@ var Database = /** @class */ (function () {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    Database.deleteById = function (_id, collection) {
+    function deleteById(_id, collection) {
         return __awaiter(this, void 0, void 0, function () {
             var err_2;
             return __generator(this, function (_a) {
@@ -352,7 +360,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         if (typeof _id !== 'object') {
-                            _id = new ObjectId(_id);
+                            _id = new mongodb_1.ObjectId(_id);
                         }
                         _a.label = 2;
                     case 2:
@@ -368,7 +376,8 @@ var Database = /** @class */ (function () {
                 }
             });
         });
-    };
+    }
+    Database.deleteById = deleteById;
     /**
      * Specify a list of fields to select from the database in a collection.
      * Use case: Selects all data from a collection and only returns the specified keys.
@@ -378,7 +387,7 @@ var Database = /** @class */ (function () {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    Database.selectData = function (collection, keys) {
+    function selectData(collection, keys) {
         return __awaiter(this, void 0, void 0, function () {
             var selectData, i;
             return __generator(this, function (_a) {
@@ -406,7 +415,8 @@ var Database = /** @class */ (function () {
                 }
             });
         });
-    };
+    }
+    Database.selectData = selectData;
     /**
      * Update any data that matches specified field name and value.
      * Use case: Could be used to migrate old field values to new field values in bulk in a collection.
@@ -417,7 +427,7 @@ var Database = /** @class */ (function () {
      * @return {*}  {Promise<boolean>}
      * @memberof Database
      */
-    Database.updateDataByFieldMatch = function (key, value, data, collection) {
+    function updateDataByFieldMatch(key, value, data, collection) {
         return __awaiter(this, void 0, void 0, function () {
             var updated;
             var _a;
@@ -432,7 +442,7 @@ var Database = /** @class */ (function () {
                     case 1:
                         _b.sent();
                         if (key === '_id' && typeof value !== 'object') {
-                            value = new ObjectID(value);
+                            value = new mongodb_1.ObjectID(value);
                         }
                         return [4 /*yield*/, db.collection(collection).findOneAndUpdate((_a = {}, _a[key] = value, _a), { $set: __assign({}, data) })];
                     case 2:
@@ -444,7 +454,8 @@ var Database = /** @class */ (function () {
                 }
             });
         });
-    };
+    }
+    Database.updateDataByFieldMatch = updateDataByFieldMatch;
     /**
      * Drop a collection from the database.
      * @static
@@ -452,7 +463,7 @@ var Database = /** @class */ (function () {
      * @return {Promise<void>}
      * @memberof Database
      */
-    Database.dropCollection = function (collectionName) {
+    function dropCollection(collectionName) {
         return __awaiter(this, void 0, void 0, function () {
             var res, err_3;
             return __generator(this, function (_a) {
@@ -483,20 +494,21 @@ var Database = /** @class */ (function () {
                         return [3 /*break*/, 5];
                     case 4:
                         err_3 = _a.sent();
-                        Logger.log("Did not find " + collectionName + " to drop.");
+                        logger_1.Logger.log("Did not find " + collectionName + " to drop.");
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/, res];
                 }
             });
         });
-    };
+    }
+    Database.dropCollection = dropCollection;
     /**
      * Remove an entire database from MongoDB. Including all collections.
      * @static
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    Database.dropDatabase = function () {
+    function dropDatabase() {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -507,25 +519,26 @@ var Database = /** @class */ (function () {
                                 .db()
                                 .dropDatabase()
                                 .catch(function (err) {
-                                Logger.error(err);
+                                logger_1.Logger.error(err);
                                 return false;
                             })
                                 .then(function (res) {
-                                Logger.log("Dropped database successfully.");
+                                logger_1.Logger.log("Dropped database successfully.");
                                 return true;
                             })];
                     case 2: return [2 /*return*/, _a.sent()];
                 }
             });
         });
-    };
+    }
+    Database.dropDatabase = dropDatabase;
     /**
      * Close the connection to the database.
      * @static
      * @return {Promise<void>}
      * @memberof Database
      */
-    Database.close = function () {
+    function close() {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -545,8 +558,7 @@ var Database = /** @class */ (function () {
                 }
             });
         });
-    };
-    return Database;
-}());
-export { Database };
+    }
+    Database.close = close;
+})(Database = exports.Database || (exports.Database = {}));
 //# sourceMappingURL=index.js.map
