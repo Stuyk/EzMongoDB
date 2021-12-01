@@ -29,6 +29,7 @@ async function hasInitialized(): Promise<boolean> {
     });
 }
 
+/** @type {*} */
 const Database = {
     init: async (url: string, databaseName: string, collections: Array<string>): Promise<boolean> => {
         if (client) {
@@ -72,6 +73,36 @@ const Database = {
 
         Logger.log(`Connection Established`);
         isInitialized = true;
+        return true;
+    },
+
+    /**
+     * Create a collection if they do not exist.
+     * @param {string} collection
+     **/
+    createCollection: async (collection: string): Promise<boolean> => {
+        if (!collection || typeof collection !== 'string') {
+            console.error(`Failed to specify collections.`);
+            return false;
+        }
+
+        await hasInitialized();
+
+        const currentCollections = await db.collections();
+
+        const index = await currentCollections.findIndex((x) => x.collectionName === collection);
+        if (index >= 0) {
+            return true;
+        }
+
+        const result = await db.createCollection(collection).catch((err) => {
+            return false;
+        });
+
+        if (!result) {
+            return result as boolean;
+        }
+
         return true;
     },
 

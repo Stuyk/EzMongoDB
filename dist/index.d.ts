@@ -1,5 +1,11 @@
+/** @type {*} */
 declare const Database: {
     init: (url: string, databaseName: string, collections: Array<string>) => Promise<boolean>;
+    /**
+     * Create a collection if they do not exist.
+     * @param {string} collection
+     **/
+    createCollection: (collection: string) => Promise<boolean>;
     /**
      * Find one document by key and value pair. Equivalent of fetching by an id.
      * Use case: Fetching a single document with an id, name, username, etc.

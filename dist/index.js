@@ -75,6 +75,7 @@ function hasInitialized() {
         });
     });
 }
+/** @type {*} */
 var Database = {
     init: function (url, databaseName, collections) { return __awaiter(void 0, void 0, void 0, function () {
         var didConnect, currentCollections, _loop_1, i;
@@ -137,6 +138,43 @@ var Database = {
                 case 6:
                     logger_1.Logger.log("Connection Established");
                     isInitialized = true;
+                    return [2 /*return*/, true];
+            }
+        });
+    }); },
+    /**
+     * Create a collection if they do not exist.
+     * @param {string} collection
+     **/
+    createCollection: function (collection) { return __awaiter(void 0, void 0, void 0, function () {
+        var currentCollections, index, result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!collection || typeof collection !== 'string') {
+                        console.error("Failed to specify collections.");
+                        return [2 /*return*/, false];
+                    }
+                    return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, db.collections()];
+                case 2:
+                    currentCollections = _a.sent();
+                    return [4 /*yield*/, currentCollections.findIndex(function (x) { return x.collectionName === collection; })];
+                case 3:
+                    index = _a.sent();
+                    if (index >= 0) {
+                        return [2 /*return*/, true];
+                    }
+                    return [4 /*yield*/, db.createCollection(collection).catch(function (err) {
+                            return false;
+                        })];
+                case 4:
+                    result = _a.sent();
+                    if (!result) {
+                        return [2 /*return*/, result];
+                    }
                     return [2 /*return*/, true];
             }
         });
