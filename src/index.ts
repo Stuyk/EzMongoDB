@@ -36,10 +36,7 @@ const Database = {
             return true;
         }
 
-        client = new MongoClient(url, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true
-        });
+        client = new MongoClient(url, { retryReads: true, retryWrites: true });
 
         const didConnect = await client.connect().catch((err) => {
             console.error(err);
@@ -50,6 +47,13 @@ const Database = {
             Logger.error(`Failed to connect to Database with ${url}. Double-check specified URL, and ports.`);
             return false;
         }
+
+        // Force Reconnection
+        client.on('connectionClosed', () => {
+            isInitialized = false;
+            Logger.log(`Failed to connect to Database, retrying connection...`);
+            Database.init(url, databaseName, collections);
+        });
 
         db = client.db(databaseName);
 
@@ -129,7 +133,7 @@ const Database = {
             value = new ObjectId(value);
         }
 
-        return await db.collection(collectionName).findOne({ [key]: value });
+        return await db.collection(collectionName).findOne<T>({ [key]: value });
     },
 
     /**
@@ -156,7 +160,7 @@ const Database = {
         }
 
         const collection = await db.collection(collectionName);
-        return await collection.find({ [key]: value }).toArray();
+        return await collection.find<T>({ [key]: value }).toArray();
     },
 
     /**
@@ -176,7 +180,66 @@ const Database = {
         await hasInitialized();
 
         const collection = await db.collection(collectionName);
-        return collection.find().toArray();
+        return collection.find<T>({}).toArray();
+    },
+    /**
+     * Creates a search index for a specific 'text' field. Requires a 'string' field. Not numbers.
+     * Use case: Searching for all users with 'Johnny' in their 'name' key.
+     * @static
+     * @template T
+     * @param {string} key The key of the document that needs to be indexed
+     * @param {string} collectionName The collection which this document needs indexing on.
+     * @return {Promise<void>}
+     * @memberof Database
+     */
+    createSearchIndex: async (key: string, collectionName: string): Promise<void> => {
+        if (!collectionName) {
+            Logger.error(`Failed to specify collectionName for createSearchIndex.`);
+            return;
+        }
+
+        await hasInitialized();
+
+        const collection = await db.collection(collectionName);
+        const doesIndexExist = await collection.indexExists(key);
+
+        if (!doesIndexExist) {
+            await collection.createIndex({ [key]: 'text' });
+        }
+    },
+
+    /**
+     * Fetch all data that uses a search term inside a field name.
+     * Use case: Searching for all users with 'Johnny' in their 'name' key.
+     * @static
+     * @template T
+     * @param {string} key
+     * @param {string} searchTerm
+     * @param {string} collectionName
+     * @return {Promise<T[]>}
+     * @memberof Database
+     */
+    fetchWithSearch: async <T>(searchTerm: string, collectionName: string): Promise<T[]> => {
+        if (!collectionName) {
+            Logger.error(`Failed to specify collectionName for fetchWithSearch.`);
+            return [];
+        }
+
+        await hasInitialized();
+
+        const collection = await db.collection(collectionName);
+        let results;
+
+        try {
+            results = await collection.find<T>({ $text: { $search: searchTerm, $caseSensitive: false } }).toArray();
+        } catch (err) {
+            Logger.error(
+                `Failed to use 'createSearchIndex' before searching collection. Use 'createSearchIndex' function once, and property must be of stirng type in object.`
+            );
+            return [];
+        }
+
+        return results;
     },
 
     /**
@@ -202,7 +265,7 @@ const Database = {
             return null;
         }
 
-        return await db.collection(collection).findOne({ _id: result.insertedId });
+        return await db.collection(collection).findOne<T>({ _id: result.insertedId });
     },
 
     /**
@@ -292,8 +355,8 @@ const Database = {
 
         return await db
             .collection(collection)
-            .find({})
-            .project({ ...selectData })
+            .find<T>({})
+            .project<T>({ ...selectData })
             .toArray();
     },
 

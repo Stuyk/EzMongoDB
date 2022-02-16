@@ -25,8 +25,29 @@ test('should insert data into collection', async () => {
     expect(doc.name).toBe('bob');
 });
 
+test('should create search index for name', async () => {
+    await Database.createSearchIndex('name', tempCollection);
+});
+
 test('should find name with bob', async () => {
-    const docs = await Database.fetchAllByField('name', 'bob', tempCollection);
+    const docs = await Database.fetchAllByField<{ _id?: any; name: string }[]>('name', 'bob', tempCollection);
+    expect(docs.length).toBeGreaterThanOrEqual(1);
+});
+
+test('should create multiple entries', async () => {
+    for (let i = 0; i < 10; i++) {
+        const newDoc = await Database.insertData<{ _id?: any; name: string }>(
+            { name: `id-${i}-johnny` },
+            tempCollection,
+            true
+        );
+
+        expect(newDoc.name).toContain('johnny');
+    }
+});
+
+test('should fuzzy search by id-', async () => {
+    const docs = await Database.fetchWithSearch('id-', tempCollection);
     expect(docs.length).toBeGreaterThanOrEqual(1);
 });
 
