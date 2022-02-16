@@ -40,6 +40,29 @@ declare const Database: {
      */
     fetchAllData: <T_2>(collectionName: string) => Promise<T_2[]>;
     /**
+     * Creates a search index for a specific 'text' field. Requires a 'string' field. Not numbers.
+     * Use case: Searching for all users with 'Johnny' in their 'name' key.
+     * @static
+     * @template T
+     * @param {string} key The key of the document that needs to be indexed
+     * @param {string} collectionName The collection which this document needs indexing on.
+     * @return {Promise<void>}
+     * @memberof Database
+     */
+    createSearchIndex: (key: string, collectionName: string) => Promise<void>;
+    /**
+     * Fetch all data that uses a search term inside a field name.
+     * Use case: Searching for all users with 'Johnny' in their 'name' key.
+     * @static
+     * @template T
+     * @param {string} key
+     * @param {string} searchTerm
+     * @param {string} collectionName
+     * @return {Promise<T[]>}
+     * @memberof Database
+     */
+    fetchWithSearch: <T_3>(searchTerm: string, collectionName: string) => Promise<T_3[]>;
+    /**
      * Insert a document and return the new full document with _id.
      * Use case: Insert a new entry into the database.
      * @param {T} document
@@ -48,7 +71,7 @@ declare const Database: {
      * @returns {Promise<T | null>} Document
      * @template T
      */
-    insertData: <T_3>(document: T_3, collection: string, returnDocument?: boolean) => Promise<T_3>;
+    insertData: <T_4>(document: T_4, collection: string, returnDocument?: boolean) => Promise<T_4>;
     /**
      * Modify an existing document in the database. Must have an _id first to modify data.
      * Use case: Update an existing document with new data, or update existing data.
@@ -79,7 +102,7 @@ declare const Database: {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    selectData: <T_4>(collection: string, keys: string[]) => Promise<T_4[]>;
+    selectData: <T_5>(collection: string, keys: string[]) => Promise<T_5[]>;
     /**
      * Update any data that matches specified field name and value.
      * Use case: Could be used to migrate old field values to new field values in bulk in a collection.
