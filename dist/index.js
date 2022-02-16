@@ -85,10 +85,7 @@ var Database = {
                     if (client) {
                         return [2 /*return*/, true];
                     }
-                    client = new mongodb_1.MongoClient(url, {
-                        useUnifiedTopology: true,
-                        useNewUrlParser: true
-                    });
+                    client = new mongodb_1.MongoClient(url, { retryReads: true, retryWrites: true });
                     return [4 /*yield*/, client.connect().catch(function (err) {
                             console.error(err);
                             return false;
@@ -99,6 +96,12 @@ var Database = {
                         logger_1.Logger.error("Failed to connect to Database with " + url + ". Double-check specified URL, and ports.");
                         return [2 /*return*/, false];
                     }
+                    // Force Reconnection
+                    client.on('connectionClosed', function () {
+                        isInitialized = false;
+                        logger_1.Logger.log("Failed to connect to Database, retrying connection...");
+                        Database.init(url, databaseName, collections);
+                    });
                     db = client.db(databaseName);
                     if (collections.length <= 0) {
                         return [2 /*return*/, true];
@@ -268,7 +271,86 @@ var Database = {
                     return [4 /*yield*/, db.collection(collectionName)];
                 case 2:
                     collection = _a.sent();
-                    return [2 /*return*/, collection.find().toArray()];
+                    return [2 /*return*/, collection.find({}).toArray()];
+            }
+        });
+    }); },
+    /**
+     * Creates a search index for a specific 'text' field. Requires a 'string' field. Not numbers.
+     * Use case: Searching for all users with 'Johnny' in their 'name' key.
+     * @static
+     * @template T
+     * @param {string} key The key of the document that needs to be indexed
+     * @param {string} collectionName The collection which this document needs indexing on.
+     * @return {Promise<void>}
+     * @memberof Database
+     */
+    createSearchIndex: function (key, collectionName) { return __awaiter(void 0, void 0, void 0, function () {
+        var collection, doesIndexExist;
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    if (!collectionName) {
+                        logger_1.Logger.error("Failed to specify collectionName for createSearchIndex.");
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _b.sent();
+                    return [4 /*yield*/, db.collection(collectionName)];
+                case 2:
+                    collection = _b.sent();
+                    return [4 /*yield*/, collection.indexExists(key)];
+                case 3:
+                    doesIndexExist = _b.sent();
+                    if (!!doesIndexExist) return [3 /*break*/, 5];
+                    return [4 /*yield*/, collection.createIndex((_a = {}, _a[key] = 'text', _a))];
+                case 4:
+                    _b.sent();
+                    _b.label = 5;
+                case 5: return [2 /*return*/];
+            }
+        });
+    }); },
+    /**
+     * Fetch all data that uses a search term inside a field name.
+     * Use case: Searching for all users with 'Johnny' in their 'name' key.
+     * @static
+     * @template T
+     * @param {string} key
+     * @param {string} searchTerm
+     * @param {string} collectionName
+     * @return {Promise<T[]>}
+     * @memberof Database
+     */
+    fetchWithSearch: function (searchTerm, collectionName) { return __awaiter(void 0, void 0, void 0, function () {
+        var collection, results, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!collectionName) {
+                        logger_1.Logger.error("Failed to specify collectionName for fetchWithSearch.");
+                        return [2 /*return*/, []];
+                    }
+                    return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, db.collection(collectionName)];
+                case 2:
+                    collection = _a.sent();
+                    _a.label = 3;
+                case 3:
+                    _a.trys.push([3, 5, , 6]);
+                    return [4 /*yield*/, collection.find({ $text: { $search: searchTerm, $caseSensitive: false } }).toArray()];
+                case 4:
+                    results = _a.sent();
+                    return [3 /*break*/, 6];
+                case 5:
+                    err_1 = _a.sent();
+                    logger_1.Logger.error("Failed to use 'createSearchIndex' before searching collection. Use 'createSearchIndex' function once, and property must be of stirng type in object.");
+                    return [2 /*return*/, []];
+                case 6: return [2 /*return*/, results];
             }
         });
     }); },
@@ -318,7 +400,7 @@ var Database = {
      * @memberof Database
      */
     updatePartialData: function (_id, data, collection) { return __awaiter(void 0, void 0, void 0, function () {
-        var err_1;
+        var err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -340,7 +422,7 @@ var Database = {
                     _a.sent();
                     return [2 /*return*/, true];
                 case 4:
-                    err_1 = _a.sent();
+                    err_2 = _a.sent();
                     logger_1.Logger.error("Could not find and update a value with id: " + _id.toString());
                     return [2 /*return*/, false];
                 case 5: return [2 /*return*/];
@@ -357,7 +439,7 @@ var Database = {
      * @memberof Database
      */
     deleteById: function (_id, collection) { return __awaiter(void 0, void 0, void 0, function () {
-        var err_2;
+        var err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -379,7 +461,7 @@ var Database = {
                     _a.sent();
                     return [2 /*return*/, true];
                 case 4:
-                    err_2 = _a.sent();
+                    err_3 = _a.sent();
                     return [2 /*return*/, false];
                 case 5: return [2 /*return*/];
             }
@@ -465,7 +547,7 @@ var Database = {
      * @memberof Database
      */
     dropCollection: function (collectionName) { return __awaiter(void 0, void 0, void 0, function () {
-        var res, err_3;
+        var res, err_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -493,7 +575,7 @@ var Database = {
                     res = _a.sent();
                     return [3 /*break*/, 5];
                 case 4:
-                    err_3 = _a.sent();
+                    err_4 = _a.sent();
                     logger_1.Logger.log("Did not find " + collectionName + " to drop.");
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/, res];

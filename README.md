@@ -6,7 +6,7 @@ Store your client data in collections and fetch and perfrom creation, reading, u
 
 ## Prerequisites
 
--   NodeJS 13+
+-   NodeJS 16+
 -   [A MongoDB Server](https://www.mongodb.com/try/download/community)
 
 ## Install
@@ -80,8 +80,14 @@ async function connect() {
     }
 
     const newDocument = {
-        username: 'somePerson'
+        identifier: 'id-1-aaa-bbb-ccc', // Not required, just an example
+        username: 'somePerson',
+        someNumber: 1 // Not required, just an example
     }
+
+    // Create a search index for 'string' fields
+    await Database.createSearchIndex('identifier', 'accounts');
+    await Database.createSearchIndex('username', 'accounts');
 
     // Create new data in a collection (table).
     // This is now a document with `_id` attached to it.
@@ -89,6 +95,11 @@ async function connect() {
     if (!somePerson) {
         throw new Error('Could not insert data');
     }
+
+    // Fetch all entries that have an 'id-' in their properties
+    const somePeople = await Database.fetchWithSearch('id-', 'accounts'); // Fetches anything with 'id-' in a field
+    const someMorePeople = await Database.fetchWithSearch('1-aaa', 'accounts'); // Fetches anything with '1-aaa' in a field
+
 
     // Update all data for document based on 
     // ID in a collection.
