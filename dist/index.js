@@ -198,7 +198,11 @@ var Database = {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (!key || !value || !collectionName) {
+                    if (value === undefined || value === null) {
+                        console.error("value passed in fetchData cannot be null or undefined");
+                        return [2 /*return*/, null];
+                    }
+                    if (!key || !collectionName) {
                         console.error("Failed to specify key, value, or collectionName for fetchAllByField.");
                         return [2 /*return*/, null];
                     }
@@ -230,7 +234,11 @@ var Database = {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (!key || !value || !collectionName) {
+                    if (value === undefined || value === null) {
+                        console.error("value passed in fetchData cannot be null or undefined");
+                        return [2 /*return*/, null];
+                    }
+                    if (!key || !collectionName) {
                         console.error("Failed to specify key, value, or collectionName for fetchAllByField.");
                         return [2 /*return*/, []];
                     }
@@ -519,7 +527,11 @@ var Database = {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (!key || !value || !data || !collection) {
+                    if (value === undefined || value === null) {
+                        console.error("value passed in fetchData cannot be null or undefined");
+                        return [2 /*return*/, null];
+                    }
+                    if (!key || !data || !collection) {
                         console.error("Failed to specify key, value, data, or collection for updateDataByFieldMatch.");
                         return [2 /*return*/, false];
                     }

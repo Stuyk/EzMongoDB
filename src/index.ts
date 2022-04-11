@@ -122,7 +122,12 @@ const Database = {
      * @memberof Database
      */
     fetchData: async <T>(key: string, value: any, collectionName: string): Promise<T | null> => {
-        if (!key || !value || !collectionName) {
+        if (value === undefined || value === null) {
+            console.error(`value passed in fetchData cannot be null or undefined`);
+            return null;
+        }
+
+        if (!key || !collectionName) {
             console.error(`Failed to specify key, value, or collectionName for fetchAllByField.`);
             return null;
         }
@@ -148,7 +153,12 @@ const Database = {
      * @memberof Database
      */
     fetchAllByField: async <T>(key: string, value: any, collectionName: string): Promise<T[]> => {
-        if (!key || !value || !collectionName) {
+        if (value === undefined || value === null) {
+            console.error(`value passed in fetchData cannot be null or undefined`);
+            return null;
+        }
+
+        if (!key || !collectionName) {
             console.error(`Failed to specify key, value, or collectionName for fetchAllByField.`);
             return [];
         }
@@ -371,7 +381,12 @@ const Database = {
      * @memberof Database
      */
     updateDataByFieldMatch: async (key: string, value: any, data: Object, collection: string): Promise<boolean> => {
-        if (!key || !value || !data || !collection) {
+        if (value === undefined || value === null) {
+            console.error(`value passed in fetchData cannot be null or undefined`);
+            return null;
+        }
+
+        if (!key || !data || !collection) {
             console.error(`Failed to specify key, value, data, or collection for updateDataByFieldMatch.`);
             return false;
         }
