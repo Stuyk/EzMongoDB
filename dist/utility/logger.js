@@ -5,10 +5,10 @@ var Logger = /** @class */ (function () {
     function Logger() {
     }
     Logger.log = function (value) {
-        console.log("[".concat(new Date(Date.now()).toLocaleTimeString(), "][EzMongoDB] ").concat(value));
+        console.log("[" + new Date(Date.now()).toLocaleTimeString() + "][EzMongoDB] " + value);
     };
     Logger.error = function (value) {
-        console.error("[".concat(new Date(Date.now()).toLocaleTimeString(), "][EzMongoDB] ").concat(value));
+        console.error("[" + new Date(Date.now()).toLocaleTimeString() + "][EzMongoDB] " + value);
     };
     return Logger;
 }());

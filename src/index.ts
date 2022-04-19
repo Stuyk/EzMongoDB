@@ -1,4 +1,4 @@
-import { Db, MongoClient, ObjectId, ObjectID } from 'mongodb';
+import { Db, MongoClient, ObjectId } from 'mongodb';
 import { Logger } from './utility/logger';
 
 let isInitialized = false;
@@ -429,7 +429,7 @@ const Database = {
         await hasInitialized();
 
         if (key === '_id' && typeof value !== 'object') {
-            value = new ObjectID(value);
+            value = new ObjectId(value);
         }
 
         const updated = await db.collection(collection).findOneAndUpdate({ [key]: value }, { $set: { ...data } });

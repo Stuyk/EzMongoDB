@@ -93,7 +93,7 @@ var Database = {
                 case 1:
                     didConnect = _a.sent();
                     if (!didConnect) {
-                        logger_1.Logger.error("Failed to connect to Database with ".concat(url, ". Double-check specified URL, and ports."));
+                        logger_1.Logger.error("Failed to connect to Database with " + url + ". Double-check specified URL, and ports.");
                         return [2 /*return*/, false];
                     }
                     // Force Reconnection
@@ -122,7 +122,7 @@ var Database = {
                                     return [4 /*yield*/, db.createCollection(collectionName)];
                                 case 1:
                                     _b.sent();
-                                    logger_1.Logger.log("Generated Collection - ".concat(collectionName));
+                                    logger_1.Logger.log("Generated Collection - " + collectionName);
                                     return [2 /*return*/];
                             }
                         });
@@ -437,7 +437,7 @@ var Database = {
                 case 6: return [2 /*return*/, true];
                 case 7:
                     err_2 = _a.sent();
-                    logger_1.Logger.error("Could not find and update a value with id: ".concat(_id.toString()));
+                    logger_1.Logger.error("Could not find and update a value with id: " + _id.toString());
                     return [2 /*return*/, false];
                 case 8: return [2 /*return*/];
             }
@@ -477,7 +477,7 @@ var Database = {
                     return [2 /*return*/, true];
                 case 4:
                     err_3 = _a.sent();
-                    logger_1.Logger.error("Could not find and update a value with id: ".concat(_id.toString()));
+                    logger_1.Logger.error("Could not find and update a value with id: " + _id.toString());
                     return [2 /*return*/, false];
                 case 5: return [2 /*return*/];
             }
@@ -634,7 +634,7 @@ var Database = {
                     return [3 /*break*/, 5];
                 case 4:
                     err_5 = _a.sent();
-                    logger_1.Logger.log("Did not find ".concat(collectionName, " to drop."));
+                    logger_1.Logger.log("Did not find " + collectionName + " to drop.");
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/, res];
             }

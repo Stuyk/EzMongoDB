@@ -5,7 +5,7 @@ jest.setTimeout(60000);
 const tempCollection = 'someCollection';
 
 test('should connect with valid initialization function', async () => {
-    const db = await Database.init('mongodb://localhost:27017', 'ezmongodb', [tempCollection]);
+    const db = await Database.init('mongodb://127.0.0.1:27017', 'ezmongodb', [tempCollection]);
     expect(db).toBe(true);
 });
 
@@ -16,7 +16,7 @@ test('should drop test collection if it exists', async () => {
 test('should re-establish connection', async () => {
     await Database.close();
 
-    const db = await Database.init('mongodb://localhost:27017', 'ezmongodb', [tempCollection]);
+    const db = await Database.init('mongodb://127.0.0.1:27017', 'ezmongodb', [tempCollection]);
     expect(db).toBe(true);
 });
 
