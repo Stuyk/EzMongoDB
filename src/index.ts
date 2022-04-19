@@ -314,6 +314,37 @@ const Database = {
     },
 
     /**
+     * Removes an existing field from an document. Must have an _id first to remove fields.
+     * Use case: Update existing document with new data structure
+     * @static
+     * @param {*} _id
+     * @param {Object} data
+     * @param {string} collection
+     * @return {Promise<boolean>}
+     * @memberof Database
+     */
+    removePartialData: async (_id: any, data: Object, collection: string): Promise<boolean> => {
+        if (!_id || !data || !collection) {
+            Logger.error(`Failed to specify id, data or collection for removePartialData.`);
+            return null;
+        }
+
+        await hasInitialized();
+
+        if (typeof _id !== 'object') {
+            _id = new ObjectId(_id);
+        }
+
+        try {
+            await db.collection(collection).findOneAndUpdate({ _id }, { $unset: { ...data } });
+            return true;
+        } catch (err) {
+            Logger.error(`Could not find and update a value with id: ${_id.toString()}`);
+            return false;
+        }
+    },
+
+    /**
      * Delete a document by _id and collection.
      * Use case: Delete the entry from the database collection.
      * @static

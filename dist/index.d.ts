@@ -84,6 +84,17 @@ declare const Database: {
      */
     updatePartialData: (_id: any, data: Object, collection: string, unset?: Object) => Promise<boolean>;
     /**
+     * Removes an existing field from an document. Must have an _id first to remove fields.
+     * Use case: Update existing document with new data structure
+     * @static
+     * @param {*} _id
+     * @param {Object} data
+     * @param {string} collection
+     * @return {Promise<boolean>}
+     * @memberof Database
+     */
+    removePartialData: (_id: any, data: Object, collection: string) => Promise<boolean>;
+    /**
      * Delete a document by _id and collection.
      * Use case: Delete the entry from the database collection.
      * @static
