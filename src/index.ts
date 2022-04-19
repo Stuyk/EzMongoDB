@@ -1,5 +1,4 @@
 import { Db, MongoClient, ObjectId, ObjectID } from 'mongodb';
-
 import { Logger } from './utility/logger';
 
 let isInitialized = false;
@@ -288,7 +287,7 @@ const Database = {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    updatePartialData: async (_id: any, data: Object, collection: string): Promise<boolean> => {
+    updatePartialData: async (_id: any, data: Object, collection: string, unset?: Object): Promise<boolean> => {
         if (!_id || !data || !collection) {
             Logger.error(`Failed to specify id, data or collection for updatePartialData.`);
             return null;
@@ -301,7 +300,12 @@ const Database = {
         }
 
         try {
-            await db.collection(collection).findOneAndUpdate({ _id }, { $set: { ...data } });
+            if (unset) {
+                await db.collection(collection).findOneAndUpdate({ _id }, { $set: { ...data }, $unset: { ...unset } });
+            } else {
+                await db.collection(collection).findOneAndUpdate({ _id }, { $set: { ...data } });
+            }
+
             return true;
         } catch (err) {
             Logger.error(`Could not find and update a value with id: ${_id.toString()}`);

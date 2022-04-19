@@ -82,7 +82,7 @@ declare const Database: {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    updatePartialData: (_id: any, data: Object, collection: string) => Promise<boolean>;
+    updatePartialData: (_id: any, data: Object, collection: string, unset?: Object) => Promise<boolean>;
     /**
      * Delete a document by _id and collection.
      * Use case: Delete the entry from the database collection.
