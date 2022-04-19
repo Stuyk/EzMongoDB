@@ -1,3 +1,4 @@
+import { Db, Filter } from 'mongodb';
 /** @type {*} */
 declare const Database: {
     init: (url: string, databaseName: string, collections: Array<string>) => Promise<boolean>;
@@ -30,6 +31,7 @@ declare const Database: {
      * @memberof Database
      */
     fetchAllByField: <T_1>(key: string, value: any, collectionName: string) => Promise<T_1[]>;
+    fetchPartialData: <T_2>(data: Filter<Object>, collection: string) => Promise<T_2>;
     /**
      * Get all elements from a collection.
      * @static
@@ -38,7 +40,7 @@ declare const Database: {
      * @return {Promise<Array<T[]>>}
      * @memberof Database
      */
-    fetchAllData: <T_2>(collectionName: string) => Promise<T_2[]>;
+    fetchAllData: <T_3>(collectionName: string) => Promise<T_3[]>;
     /**
      * Creates a search index for a specific 'text' field. Requires a 'string' field. Not numbers.
      * Use case: Searching for all users with 'Johnny' in their 'name' key.
@@ -61,7 +63,7 @@ declare const Database: {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    fetchWithSearch: <T_3>(searchTerm: string, collectionName: string) => Promise<T_3[]>;
+    fetchWithSearch: <T_4>(searchTerm: string, collectionName: string) => Promise<T_4[]>;
     /**
      * Insert a document and return the new full document with _id.
      * Use case: Insert a new entry into the database.
@@ -71,7 +73,7 @@ declare const Database: {
      * @returns {Promise<T | null>} Document
      * @template T
      */
-    insertData: <T_4>(document: T_4, collection: string, returnDocument?: boolean) => Promise<T_4>;
+    insertData: <T_5>(document: T_5, collection: string, returnDocument?: boolean) => Promise<T_5>;
     /**
      * Modify an existing document in the database. Must have an _id first to modify data.
      * Use case: Update an existing document with new data, or update existing data.
@@ -113,7 +115,7 @@ declare const Database: {
      * @return {Promise<T[]>}
      * @memberof Database
      */
-    selectData: <T_5>(collection: string, keys: string[]) => Promise<T_5[]>;
+    selectData: <T_6>(collection: string, keys: string[]) => Promise<T_6[]>;
     /**
      * Update any data that matches specified field name and value.
      * Use case: Could be used to migrate old field values to new field values in bulk in a collection.
@@ -147,5 +149,6 @@ declare const Database: {
      * @memberof Database
      */
     close: () => Promise<void>;
+    getDb: () => Promise<Db>;
 };
 export = Database;
