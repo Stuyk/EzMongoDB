@@ -93,7 +93,7 @@ var Database = {
                 case 1:
                     didConnect = _a.sent();
                     if (!didConnect) {
-                        logger_1.Logger.error("Failed to connect to Database with " + url + ". Double-check specified URL, and ports.");
+                        logger_1.Logger.error("Failed to connect to Database with ".concat(url, ". Double-check specified URL, and ports."));
                         return [2 /*return*/, false];
                     }
                     // Force Reconnection
@@ -122,7 +122,7 @@ var Database = {
                                     return [4 /*yield*/, db.createCollection(collectionName)];
                                 case 1:
                                     _b.sent();
-                                    logger_1.Logger.log("Generated Collection - " + collectionName);
+                                    logger_1.Logger.log("Generated Collection - ".concat(collectionName));
                                     return [2 /*return*/];
                             }
                         });
@@ -407,7 +407,7 @@ var Database = {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-    updatePartialData: function (_id, data, collection) { return __awaiter(void 0, void 0, void 0, function () {
+    updatePartialData: function (_id, data, collection, unset) { return __awaiter(void 0, void 0, void 0, function () {
         var err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -424,14 +424,60 @@ var Database = {
                     }
                     _a.label = 2;
                 case 2:
+                    _a.trys.push([2, 7, , 8]);
+                    if (!unset) return [3 /*break*/, 4];
+                    return [4 /*yield*/, db.collection(collection).findOneAndUpdate({ _id: _id }, { $set: __assign({}, data), $unset: __assign({}, unset) })];
+                case 3:
+                    _a.sent();
+                    return [3 /*break*/, 6];
+                case 4: return [4 /*yield*/, db.collection(collection).findOneAndUpdate({ _id: _id }, { $set: __assign({}, data) })];
+                case 5:
+                    _a.sent();
+                    _a.label = 6;
+                case 6: return [2 /*return*/, true];
+                case 7:
+                    err_2 = _a.sent();
+                    logger_1.Logger.error("Could not find and update a value with id: ".concat(_id.toString()));
+                    return [2 /*return*/, false];
+                case 8: return [2 /*return*/];
+            }
+        });
+    }); },
+    /**
+     * Removes an existing field from an document. Must have an _id first to remove fields.
+     * Use case: Update existing document with new data structure
+     * @static
+     * @param {*} _id
+     * @param {Object} data
+     * @param {string} collection
+     * @return {Promise<boolean>}
+     * @memberof Database
+     */
+    removePartialData: function (_id, data, collection) { return __awaiter(void 0, void 0, void 0, function () {
+        var err_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!_id || !data || !collection) {
+                        logger_1.Logger.error("Failed to specify id, data or collection for removePartialData.");
+                        return [2 /*return*/, null];
+                    }
+                    return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _a.sent();
+                    if (typeof _id !== 'object') {
+                        _id = new mongodb_1.ObjectId(_id);
+                    }
+                    _a.label = 2;
+                case 2:
                     _a.trys.push([2, 4, , 5]);
-                    return [4 /*yield*/, db.collection(collection).findOneAndUpdate({ _id: _id }, { $set: __assign({}, data) })];
+                    return [4 /*yield*/, db.collection(collection).findOneAndUpdate({ _id: _id }, { $unset: __assign({}, data) })];
                 case 3:
                     _a.sent();
                     return [2 /*return*/, true];
                 case 4:
-                    err_2 = _a.sent();
-                    logger_1.Logger.error("Could not find and update a value with id: " + _id.toString());
+                    err_3 = _a.sent();
+                    logger_1.Logger.error("Could not find and update a value with id: ".concat(_id.toString()));
                     return [2 /*return*/, false];
                 case 5: return [2 /*return*/];
             }
@@ -447,7 +493,7 @@ var Database = {
      * @memberof Database
      */
     deleteById: function (_id, collection) { return __awaiter(void 0, void 0, void 0, function () {
-        var err_3;
+        var err_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -469,7 +515,7 @@ var Database = {
                     _a.sent();
                     return [2 /*return*/, true];
                 case 4:
-                    err_3 = _a.sent();
+                    err_4 = _a.sent();
                     return [2 /*return*/, false];
                 case 5: return [2 /*return*/];
             }
@@ -559,7 +605,7 @@ var Database = {
      * @memberof Database
      */
     dropCollection: function (collectionName) { return __awaiter(void 0, void 0, void 0, function () {
-        var res, err_4;
+        var res, err_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -587,8 +633,8 @@ var Database = {
                     res = _a.sent();
                     return [3 /*break*/, 5];
                 case 4:
-                    err_4 = _a.sent();
-                    logger_1.Logger.log("Did not find " + collectionName + " to drop.");
+                    err_5 = _a.sent();
+                    logger_1.Logger.log("Did not find ".concat(collectionName, " to drop."));
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/, res];
             }
