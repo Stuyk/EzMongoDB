@@ -1,4 +1,4 @@
-import { Db, MongoClient, ObjectId } from 'mongodb';
+import { Db, Filter, MongoClient, ObjectId } from 'mongodb';
 import { Logger } from './utility/logger';
 
 let isInitialized = false;
@@ -170,6 +170,17 @@ const Database = {
 
         const collection = await db.collection(collectionName);
         return await collection.find<T>({ [key]: value }).toArray();
+    },
+
+    fetchPartialData: async <T>(data: Filter<Object>, collection: string): Promise<T | null> => {
+        if (!data || !collection) {
+            console.error(`Failed to specify data or collection for fetchPartialData.`);
+            return null;
+        }
+
+        await hasInitialized();
+
+        return await db.collection(collection).findOne<T>(data);
     },
 
     /**
@@ -515,6 +526,12 @@ const Database = {
         client = null;
         db = null;
         isInitialized = false;
+    },
+
+    getDb: async (): Promise<Db> => {
+        await hasInitialized();
+
+        return db;
     }
 };
 

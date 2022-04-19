@@ -256,6 +256,22 @@ var Database = {
             }
         });
     }); },
+    fetchPartialData: function (data, collection) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!data || !collection) {
+                        console.error("Failed to specify data or collection for fetchPartialData.");
+                        return [2 /*return*/, null];
+                    }
+                    return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, db.collection(collection).findOne(data)];
+                case 2: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); },
     /**
      * Get all elements from a collection.
      * @static
@@ -585,7 +601,7 @@ var Database = {
                 case 1:
                     _b.sent();
                     if (key === '_id' && typeof value !== 'object') {
-                        value = new mongodb_1.ObjectID(value);
+                        value = new mongodb_1.ObjectId(value);
                     }
                     return [4 /*yield*/, db.collection(collection).findOneAndUpdate((_a = {}, _a[key] = value, _a), { $set: __assign({}, data) })];
                 case 2:
@@ -689,6 +705,16 @@ var Database = {
                     db = null;
                     isInitialized = false;
                     return [2 /*return*/];
+            }
+        });
+    }); },
+    getDb: function () { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/, db];
             }
         });
     }); }
