@@ -59,6 +59,17 @@ test('should update name', async () => {
     expect(doc.name).toBe('jobi');
 });
 
+test('should update name and also remove age', async () => {
+    await Database.insertData({ name: 'bobi', age: 27 }, tempCollection);
+
+    const docs = await Database.fetchAllByField<{ _id?: any; name: string }>('name', 'bobi', tempCollection);
+    await Database.updatePartialData(docs[0]._id, { name: 'iboj' }, tempCollection, { age: '' });
+
+    const doc = await Database.fetchData<{ _id?: any; name: string; age?: number }>('name', 'iboj', tempCollection);
+    expect(doc.name).toBe('iboj');
+    expect(doc.age).toBeUndefined();
+});
+
 test('should fetch entire collection as array', async () => {
     const docs = await Database.fetchAllData(tempCollection);
     expect(Array.isArray(docs)).toBe(true);
