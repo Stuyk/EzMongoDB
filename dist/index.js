@@ -585,7 +585,7 @@ var Database = {
                 case 1:
                     _b.sent();
                     if (key === '_id' && typeof value !== 'object') {
-                        value = new mongodb_1.ObjectID(value);
+                        value = new mongodb_1.ObjectId(value);
                     }
                     return [4 /*yield*/, db.collection(collection).findOneAndUpdate((_a = {}, _a[key] = value, _a), { $set: __assign({}, data) })];
                 case 2:
