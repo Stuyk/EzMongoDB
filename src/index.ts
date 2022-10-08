@@ -78,12 +78,25 @@ const Database = {
         isInitialized = true;
         return true;
     },
-
     /**
-     * Create a collection if they do not exist.
+     * Returns if a collection exists.
      * @param {string} collection
+     * @returns
+     */
+    doesCollectionExist: async (collection: string): Promise<boolean> => {
+        await hasInitialized();
+
+        const currentCollections = await db.collections();
+
+        const index = await currentCollections.findIndex((x) => x.collectionName === collection);
+        return index >= 0;
+    },
+    /**
+     * Create a collection if the collection does not exist.
+     * @param {string} collection
+     * @param {boolean} returnFalseIfExists - Defaults to false, but if set to true returns false if collection exists already
      **/
-    createCollection: async (collection: string): Promise<boolean> => {
+    createCollection: async (collection: string, returnFalseIfExists = false): Promise<boolean> => {
         if (!collection || typeof collection !== 'string') {
             console.error(`Failed to specify collections.`);
             return false;
@@ -95,7 +108,7 @@ const Database = {
 
         const index = await currentCollections.findIndex((x) => x.collectionName === collection);
         if (index >= 0) {
-            return true;
+            return returnFalseIfExists ? false : true;
         }
 
         const result = await db.createCollection(collection).catch((err) => {
@@ -404,6 +417,32 @@ const Database = {
             .project<T>({ ...selectData })
             .toArray();
     },
+    /**
+     * Uses default mongodb element match functionality.
+     *
+     * See: https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/#array-of-embedded-documents
+     *
+     * @param {string} collection
+     * @param {string} propertyName
+     * @param {{ [key: string]: any }} elementMatch
+     * @returns
+     */
+    selectWithElementMatch: async <T>(
+        collection: string,
+        propertyName: string,
+        elementMatch: { [key: string]: any }
+    ): Promise<T[]> => {
+        if (!collection) {
+            console.error(`Failed to specify keys, or collection for selectData`);
+            return [];
+        }
+
+        await hasInitialized();
+
+        const currentCollection = await db.collection(collection);
+
+        return currentCollection.find<T>({ [propertyName]: { $elemMatch: elementMatch } }).toArray();
+    },
 
     /**
      * Update any data that matches specified field name and value.
@@ -496,7 +535,6 @@ const Database = {
                 return true;
             });
     },
-
     /**
      * Close the connection to the database.
      * @static

@@ -56,7 +56,7 @@ test('should update name', async () => {
     await Database.updatePartialData(docs[0]._id, { name: 'jobi' }, tempCollection);
 
     const doc = await Database.fetchData<{ _id?: any; name: string }>('name', 'jobi', tempCollection);
-    expect(doc.name).toBe('jobi');
+    expect(doc?.name).toBe('jobi');
 });
 
 test('should update name and also remove age', async () => {
@@ -66,8 +66,8 @@ test('should update name and also remove age', async () => {
     await Database.updatePartialData(docs[0]._id, { name: 'iboj' }, tempCollection, { age: '' });
 
     const doc = await Database.fetchData<{ _id?: any; name: string; age?: number }>('name', 'iboj', tempCollection);
-    expect(doc.name).toBe('iboj');
-    expect(doc.age).toBeUndefined();
+    expect(doc?.name).toBe('iboj');
+    expect(doc?.age).toBeUndefined();
 });
 
 test('should remove age', async () => {
@@ -77,7 +77,7 @@ test('should remove age', async () => {
     await Database.removePartialData(docs[0]._id, { age: '' }, tempCollection);
 
     const doc = await Database.fetchData<{ _id?: any; name: string; age?: number }>('name', 'bobi2', tempCollection);
-    expect(doc.age).toBeUndefined();
+    expect(doc?.age).toBeUndefined();
 });
 
 test('should fetch entire collection as array', async () => {
@@ -89,17 +89,42 @@ test('should fetch entire collection as array', async () => {
 test('should add new elements to document', async () => {
     let doc = await Database.fetchData<{ _id?: any; name?: string; age?: number }>('name', 'jobi', tempCollection);
 
-    await Database.updatePartialData(doc._id, { age: 1 }, tempCollection);
+    await Database.updatePartialData(doc?._id, { age: 1 }, tempCollection);
 
-    doc = await Database.fetchData<{ _id?: any; name?: string; age?: number }>('_id', doc._id, tempCollection);
+    doc = await Database.fetchData<{ _id?: any; name?: string; age?: number }>('_id', doc?._id, tempCollection);
 
     expect(doc !== null).toBe(true);
-    expect(doc.age).toBeGreaterThanOrEqual(1);
+    expect(doc?.age).toBeGreaterThanOrEqual(1);
+});
+
+test('should add new nested properties to document and fetch by element match', async () => {
+    let doc = await Database.fetchData<{
+        _id?: any;
+        name?: string;
+        age?: number;
+        attributes?: Array<{ value: number }>;
+    }>('name', 'jobi', tempCollection);
+
+    await Database.updatePartialData(
+        doc?._id,
+        { attributes: [{ value: 1 }, { value: 2 }, { value: 5 }] },
+        tempCollection
+    );
+
+    const selected = await Database.selectWithElementMatch<{
+        _id?: any;
+        name?: string;
+        age?: number;
+        attributes?: Array<{ value: number }>;
+    }>(tempCollection, 'attributes', { value: 5 });
+
+    console.log(selected);
+    expect(selected.length).toBe(1);
 });
 
 test('should delete data', async () => {
     const doc = await Database.fetchData<{ _id?: any; name: string }>('name', 'jobi', tempCollection);
-    const didDelete = await Database.deleteById(doc._id, tempCollection);
+    const didDelete = await Database.deleteById(doc?._id, tempCollection);
     expect(didDelete).toBe(true);
 });
 

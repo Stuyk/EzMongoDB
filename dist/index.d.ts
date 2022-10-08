@@ -2,10 +2,17 @@
 declare const Database: {
     init: (url: string, databaseName: string, collections: Array<string>) => Promise<boolean>;
     /**
-     * Create a collection if they do not exist.
+     * Returns if a collection exists.
      * @param {string} collection
+     * @returns
+     */
+    doesCollectionExist: (collection: string) => Promise<boolean>;
+    /**
+     * Create a collection if the collection does not exist.
+     * @param {string} collection
+     * @param {boolean} returnFalseIfExists - Defaults to false, but if set to true returns false if collection exists already
      **/
-    createCollection: (collection: string) => Promise<boolean>;
+    createCollection: (collection: string, returnFalseIfExists?: boolean) => Promise<boolean>;
     /**
      * Find one document by key and value pair. Equivalent of fetching by an id.
      * Use case: Fetching a single document with an id, name, username, etc.
@@ -114,6 +121,19 @@ declare const Database: {
      * @memberof Database
      */
     selectData: <T_5>(collection: string, keys: string[]) => Promise<T_5[]>;
+    /**
+     * Uses default mongodb element match functionality.
+     *
+     * See: https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/#array-of-embedded-documents
+     *
+     * @param {string} collection
+     * @param {string} propertyName
+     * @param {{ [key: string]: any }} elementMatch
+     * @returns
+     */
+    selectWithElementMatch: <T_6>(collection: string, propertyName: string, elementMatch: {
+        [key: string]: any;
+    }) => Promise<T_6[]>;
     /**
      * Update any data that matches specified field name and value.
      * Use case: Could be used to migrate old field values to new field values in bulk in a collection.

@@ -146,19 +146,15 @@ var Database = {
         });
     }); },
     /**
-     * Create a collection if they do not exist.
+     * Returns if a collection exists.
      * @param {string} collection
-     **/
-    createCollection: function (collection) { return __awaiter(void 0, void 0, void 0, function () {
-        var currentCollections, index, result;
+     * @returns
+     */
+    doesCollectionExist: function (collection) { return __awaiter(void 0, void 0, void 0, function () {
+        var currentCollections, index;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    if (!collection || typeof collection !== 'string') {
-                        console.error("Failed to specify collections.");
-                        return [2 /*return*/, false];
-                    }
-                    return [4 /*yield*/, hasInitialized()];
+                case 0: return [4 /*yield*/, hasInitialized()];
                 case 1:
                     _a.sent();
                     return [4 /*yield*/, db.collections()];
@@ -167,21 +163,51 @@ var Database = {
                     return [4 /*yield*/, currentCollections.findIndex(function (x) { return x.collectionName === collection; })];
                 case 3:
                     index = _a.sent();
-                    if (index >= 0) {
-                        return [2 /*return*/, true];
-                    }
-                    return [4 /*yield*/, db.createCollection(collection).catch(function (err) {
-                            return false;
-                        })];
-                case 4:
-                    result = _a.sent();
-                    if (!result) {
-                        return [2 /*return*/, result];
-                    }
-                    return [2 /*return*/, true];
+                    return [2 /*return*/, index >= 0];
             }
         });
     }); },
+    /**
+     * Create a collection if the collection does not exist.
+     * @param {string} collection
+     * @param {boolean} returnFalseIfExists - Defaults to false, but if set to true returns false if collection exists already
+     **/
+    createCollection: function (collection, returnFalseIfExists) {
+        if (returnFalseIfExists === void 0) { returnFalseIfExists = false; }
+        return __awaiter(void 0, void 0, void 0, function () {
+            var currentCollections, index, result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!collection || typeof collection !== 'string') {
+                            console.error("Failed to specify collections.");
+                            return [2 /*return*/, false];
+                        }
+                        return [4 /*yield*/, hasInitialized()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, db.collections()];
+                    case 2:
+                        currentCollections = _a.sent();
+                        return [4 /*yield*/, currentCollections.findIndex(function (x) { return x.collectionName === collection; })];
+                    case 3:
+                        index = _a.sent();
+                        if (index >= 0) {
+                            return [2 /*return*/, returnFalseIfExists ? false : true];
+                        }
+                        return [4 /*yield*/, db.createCollection(collection).catch(function (err) {
+                                return false;
+                            })];
+                    case 4:
+                        result = _a.sent();
+                        if (!result) {
+                            return [2 /*return*/, result];
+                        }
+                        return [2 /*return*/, true];
+                }
+            });
+        });
+    },
     /**
      * Find one document by key and value pair. Equivalent of fetching by an id.
      * Use case: Fetching a single document with an id, name, username, etc.
@@ -554,6 +580,36 @@ var Database = {
                             .project(__assign({}, selectData))
                             .toArray()];
                 case 2: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); },
+    /**
+     * Uses default mongodb element match functionality.
+     *
+     * See: https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/#array-of-embedded-documents
+     *
+     * @param {string} collection
+     * @param {string} propertyName
+     * @param {{ [key: string]: any }} elementMatch
+     * @returns
+     */
+    selectWithElementMatch: function (collection, propertyName, elementMatch) { return __awaiter(void 0, void 0, void 0, function () {
+        var currentCollection;
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    if (!collection) {
+                        console.error("Failed to specify keys, or collection for selectData");
+                        return [2 /*return*/, []];
+                    }
+                    return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _b.sent();
+                    return [4 /*yield*/, db.collection(collection)];
+                case 2:
+                    currentCollection = _b.sent();
+                    return [2 /*return*/, currentCollection.find((_a = {}, _a[propertyName] = { $elemMatch: elementMatch }, _a)).toArray()];
             }
         });
     }); },
