@@ -327,6 +327,37 @@ const Database = {
     },
 
     /**
+     * Modify an existing document in the database using raw mongodb syntax. Must have an _id first to modify data.
+     * Use case: Update an existing document with specific update operators
+     * @static
+     * @param {*} _id
+     * @param {Object} rawData
+     * @param {string} collection
+     * @return {Promise<boolean>}
+     * @memberof Database
+     */
+     updatePartialDataRaw: async (_id: any, rawData: Object, collection: string): Promise<boolean> => {
+        if (!_id || !rawData || !collection) {
+            Logger.error(`Failed to specify id, data or collection for updatePartialDataRaw.`);
+            return null;
+        }
+
+        await hasInitialized();
+
+        if (typeof _id !== 'object') {
+            _id = new ObjectId(_id);
+        }
+
+        try {
+            await db.collection(collection).findOneAndUpdate({ _id }, rawData);
+            return true;
+        } catch (err) {
+            Logger.error(`Could not find and update a value with id: ${_id.toString()}`);
+            return false;
+        }
+    },
+
+    /**
      * Removes an existing field from an document. Must have an _id first to remove fields.
      * Use case: Update existing document with new data structure
      * @static

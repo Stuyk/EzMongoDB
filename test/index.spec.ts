@@ -122,6 +122,18 @@ test('should add new nested properties to document and fetch by element match', 
     expect(selected.length).toBe(1);
 });
 
+test('should update specific array item only', async () => {
+    const newDoc = await Database.insertData<{ _id?: any; name: string, items: Array<number> }>(
+        { name: `joe`, items: [1, 2, 3] },
+        tempCollection,
+        true
+    );
+    await Database.updatePartialDataRaw(newDoc._id, { $push: { items: { $each: [ 4, 5, 6 ] } } }, tempCollection);
+
+    const doc = await Database.fetchData<{ _id?: any; name: string, items: Array<number> }>('name', 'joe', tempCollection);
+    expect(doc?.items?.length).toBe(6);
+});
+
 test('should delete data', async () => {
     const doc = await Database.fetchData<{ _id?: any; name: string }>('name', 'jobi', tempCollection);
     const didDelete = await Database.deleteById(doc?._id, tempCollection);
