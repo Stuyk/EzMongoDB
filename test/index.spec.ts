@@ -122,7 +122,7 @@ test('should add new nested properties to document and fetch by element match', 
     expect(selected.length).toBe(1);
 });
 
-test('should update specific array item only', async () => {
+test('should append to array', async () => {
     const newDoc = await Database.insertData<{ _id?: any; name: string, items: Array<number> }>(
         { name: `joe`, items: [1, 2, 3] },
         tempCollection,
