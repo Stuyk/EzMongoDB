@@ -146,6 +146,20 @@ var Database = {
         });
     }); },
     /**
+     * Returns the database currently being worked with directly.
+     * @returns {Db}
+     */
+    getDatabaseInstance: function () { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/, db];
+            }
+        });
+    }); },
+    /**
      * Returns if a collection exists.
      * @param {string} collection
      * @returns
@@ -470,6 +484,46 @@ var Database = {
         });
     }); },
     /**
+     * Modify an existing document in the database using raw mongodb syntax. Must have an _id first to modify data.
+     * Use case: Update an existing document with specific update operators
+     * @static
+     * @param {*} _id
+     * @param {Object} rawData
+     * @param {string} collection
+     * @return {Promise<boolean>}
+     * @memberof Database
+     */
+    updatePartialDataRaw: function (_id, rawData, collection) { return __awaiter(void 0, void 0, void 0, function () {
+        var err_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!_id || !rawData || !collection) {
+                        logger_1.Logger.error("Failed to specify id, data or collection for updatePartialDataRaw.");
+                        return [2 /*return*/, null];
+                    }
+                    return [4 /*yield*/, hasInitialized()];
+                case 1:
+                    _a.sent();
+                    if (typeof _id !== 'object') {
+                        _id = new mongodb_1.ObjectId(_id);
+                    }
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, db.collection(collection).findOneAndUpdate({ _id: _id }, rawData)];
+                case 3:
+                    _a.sent();
+                    return [2 /*return*/, true];
+                case 4:
+                    err_3 = _a.sent();
+                    logger_1.Logger.error("Could not find and update a value with id: " + _id.toString());
+                    return [2 /*return*/, false];
+                case 5: return [2 /*return*/];
+            }
+        });
+    }); },
+    /**
      * Removes an existing field from an document. Must have an _id first to remove fields.
      * Use case: Update existing document with new data structure
      * @static
@@ -480,7 +534,7 @@ var Database = {
      * @memberof Database
      */
     removePartialData: function (_id, data, collection) { return __awaiter(void 0, void 0, void 0, function () {
-        var err_3;
+        var err_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -502,7 +556,7 @@ var Database = {
                     _a.sent();
                     return [2 /*return*/, true];
                 case 4:
-                    err_3 = _a.sent();
+                    err_4 = _a.sent();
                     logger_1.Logger.error("Could not find and update a value with id: " + _id.toString());
                     return [2 /*return*/, false];
                 case 5: return [2 /*return*/];
@@ -519,7 +573,7 @@ var Database = {
      * @memberof Database
      */
     deleteById: function (_id, collection) { return __awaiter(void 0, void 0, void 0, function () {
-        var err_4;
+        var err_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -541,7 +595,7 @@ var Database = {
                     _a.sent();
                     return [2 /*return*/, true];
                 case 4:
-                    err_4 = _a.sent();
+                    err_5 = _a.sent();
                     return [2 /*return*/, false];
                 case 5: return [2 /*return*/];
             }
@@ -661,7 +715,7 @@ var Database = {
      * @memberof Database
      */
     dropCollection: function (collectionName) { return __awaiter(void 0, void 0, void 0, function () {
-        var res, err_5;
+        var res, err_6;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -689,7 +743,7 @@ var Database = {
                     res = _a.sent();
                     return [3 /*break*/, 5];
                 case 4:
-                    err_5 = _a.sent();
+                    err_6 = _a.sent();
                     logger_1.Logger.log("Did not find " + collectionName + " to drop.");
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/, res];

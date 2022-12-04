@@ -79,6 +79,14 @@ const Database = {
         return true;
     },
     /**
+     * Returns the database currently being worked with directly.
+     * @returns {Db}
+     */
+    getDatabaseInstance: async (): Promise<Db> => {
+        await hasInitialized();
+        return db;
+    },
+    /**
      * Returns if a collection exists.
      * @param {string} collection
      * @returns
@@ -336,7 +344,7 @@ const Database = {
      * @return {Promise<boolean>}
      * @memberof Database
      */
-     updatePartialDataRaw: async (_id: any, rawData: Object, collection: string): Promise<boolean> => {
+    updatePartialDataRaw: async (_id: any, rawData: Object, collection: string): Promise<boolean> => {
         if (!_id || !rawData || !collection) {
             Logger.error(`Failed to specify id, data or collection for updatePartialDataRaw.`);
             return null;

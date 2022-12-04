@@ -2,6 +2,8 @@ EzMongo is the simple way to use MongoDB without knowing how to use MongoDB.
 
 Store your client data in collections and fetch and perfrom creation, reading, updating, and deleting functions in a very simple way.
 
+It is a **single database wrapper** for MongoDB.
+
 # Installation
 
 ## Prerequisites
@@ -133,4 +135,14 @@ async function connect() {
 }
 
 connect();
+```
+
+## Additional Functionality
+
+If you need any additional syntax or custom queries, you can use the `db` directly by fetching its instance.
+
+This lets you call all related MongoDB functionality.
+
+```ts
+const db = await Database.getDatabaseInstance();
 ```

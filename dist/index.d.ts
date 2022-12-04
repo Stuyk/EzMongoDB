@@ -1,6 +1,12 @@
+import { Db } from 'mongodb';
 /** @type {*} */
 declare const Database: {
     init: (url: string, databaseName: string, collections: Array<string>) => Promise<boolean>;
+    /**
+     * Returns the database currently being worked with directly.
+     * @returns {Db}
+     */
+    getDatabaseInstance: () => Promise<Db>;
     /**
      * Returns if a collection exists.
      * @param {string} collection
@@ -90,6 +96,17 @@ declare const Database: {
      * @memberof Database
      */
     updatePartialData: (_id: any, data: Object, collection: string, unset?: Object) => Promise<boolean>;
+    /**
+     * Modify an existing document in the database using raw mongodb syntax. Must have an _id first to modify data.
+     * Use case: Update an existing document with specific update operators
+     * @static
+     * @param {*} _id
+     * @param {Object} rawData
+     * @param {string} collection
+     * @return {Promise<boolean>}
+     * @memberof Database
+     */
+    updatePartialDataRaw: (_id: any, rawData: Object, collection: string) => Promise<boolean>;
     /**
      * Removes an existing field from an document. Must have an _id first to remove fields.
      * Use case: Update existing document with new data structure

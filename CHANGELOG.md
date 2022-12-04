@@ -1,3 +1,8 @@
+# 2.3.0
+```ts
++ Added getDatabaseInstance - Returns the database currently being worked with.
+```
+
 # 2.2.0
 ```ts
 + Added updatePartialDataRaw - Allows normal MongoDB syntax with partial data.

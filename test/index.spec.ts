@@ -9,6 +9,11 @@ test('should connect with valid initialization function', async () => {
     expect(db).toBe(true);
 });
 
+test('should return a database driver', async () => {
+    const db = await Database.getDatabaseInstance();
+    expect(typeof db === 'object' && db.databaseName === 'ezmongodb');
+});
+
 test('should drop test collection if it exists', async () => {
     await Database.dropCollection(tempCollection);
 });
@@ -118,19 +123,23 @@ test('should add new nested properties to document and fetch by element match', 
         attributes?: Array<{ value: number }>;
     }>(tempCollection, 'attributes', { value: 5 });
 
-    console.log(selected);
     expect(selected.length).toBe(1);
 });
 
 test('should append to array', async () => {
-    const newDoc = await Database.insertData<{ _id?: any; name: string, items: Array<number> }>(
+    const newDoc = await Database.insertData<{ _id?: any; name: string; items: Array<number> }>(
         { name: `joe`, items: [1, 2, 3] },
         tempCollection,
         true
     );
-    await Database.updatePartialDataRaw(newDoc._id, { $push: { items: { $each: [ 4, 5, 6 ] } } }, tempCollection);
+    await Database.updatePartialDataRaw(newDoc._id, { $push: { items: { $each: [4, 5, 6] } } }, tempCollection);
 
-    const doc = await Database.fetchData<{ _id?: any; name: string, items: Array<number> }>('name', 'joe', tempCollection);
+    const doc = await Database.fetchData<{ _id?: any; name: string; items: Array<number> }>(
+        'name',
+        'joe',
+        tempCollection
+    );
+
     expect(doc?.items?.length).toBe(6);
 });
 
