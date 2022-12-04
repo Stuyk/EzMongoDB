@@ -1,3 +1,8 @@
+# 2.2.0
+```ts
++ Added updatePartialDataRaw - Allows normal MongoDB syntax with partial data.
+```
+
 # 2.1.0
 
 ```ts
