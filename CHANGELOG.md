@@ -1,4 +1,4 @@
-# 2.3.0
+# 3.0.0
 ```ts
 + Added getDatabaseInstance - Returns the database currently being worked with.
 ```
